@@ -35,6 +35,32 @@ class RegisterForm(UserCreationForm):
 # - Year (DateField)
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
+class CarMake(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class CarModel(models.Model):
+
+    class VehicleTypes(models.TextChoices):
+        SUV = 'SUV'
+        ATV = 'ATV'
+        Sedan = 'Sedan'
+        Wagon = 'Wagon'
+        Compact = 'Compact'
+
+    make = models.ForeignKey(to=CarMake, on_delete=models.DO_NOTHING)
+    dealer_id = models.IntegerField()
+    name = models.CharField(max_length=50)
+    type = models.CharField(choices=VehicleTypes.choices, max_length=100)
+    year = models.DateField()
+
+    def __str__(self):
+        return self.name
+
+
 
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
