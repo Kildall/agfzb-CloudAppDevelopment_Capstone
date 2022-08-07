@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ['kildall.us-east.mybluemix.net']
 
 
 # Application definition
@@ -67,6 +67,10 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
             ],
+                
+        'libraries':{
+            'addcss': 'djangoapp.templatetags.css_tag',
+            }
         },
     },
 ]
