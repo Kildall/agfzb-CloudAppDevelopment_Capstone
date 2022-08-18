@@ -135,7 +135,7 @@ def analyze_review_sentiments(text):
     args = {
         'text': text,
         'version': '2022-04-07',
-        'api_key': 'yhNB1bGxsicwFWaVP5IprQqcCPcX0N8UoX_qoJ2xbII1',
+        'api_key': '',
         'features': {
             'sentiment': True
         }
