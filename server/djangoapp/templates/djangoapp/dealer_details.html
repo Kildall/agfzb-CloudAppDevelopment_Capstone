@@ -1,18 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dealership Review</title>
-    {% load static %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+{% extends "./base.html" %}
+{% load addcss %}
+{% load static %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% block content %}
 
-    <body>
-
-    <!--Add a nav bar here -->
-
-    <!-- Add reviews as cards -->
-
-    </body>
-
-</html>
+<script>
+    $(document).ready(function () {
+        $("#reviewbtn").click(function () {
+            $("#review").show();
+            $("#review").focus();
+            $("#reviewbtn").hide();
+            $("#submitbtn").show();
+        });
+        $('#chkPurchase').change(function() {
+            if(this.checked) {
+                $('#purchased').show();
+            } else {
+                $('#purchased').hide();
+            }
+        });
+    });
+</script>
+<div class="w-100 text-center">
+    <h1>Reviews for {{dealership.full_name}}</h1>
+</div>
+<div class="mt-3 text-center">
+    {% if not reviews %}
+        <h1>This dealership doesn't have any review</h1>
+    {% endif %}
+    <div class="card-columns mr-5 ml-5">
+        {% for review in reviews %}
+        <div class="card">
+            <div class="card-header">
+                {% if review.sentiment == 'Neutral' %}
+                <img class="card-img-top img-fluid" style="max-width: 3em; height: auto;" src="{{MEDIA_URL}}/emoji/neutral.png"/>
+                <h6 class="card-subtitle mb-2 mt-2 text-warning">{{review.sentiment}}</h6>
+            {% elif review.sentiment == 'Positive' %}
+                <img class="card-img-top img-fluid" style="max-width: 3em; height: auto;" src="{{MEDIA_URL}}/emoji/positive.png"/>
+                <h6 class="card-subtitle mb-2 mt-2 text-success">{{review.sentiment}}</h6>
+            {% elif review.sentiment == 'Negative' %}
+                <img class="card-img-top img-fluid" style="max-width: 3em; height: auto;" src="{{MEDIA_URL}}/emoji/negative.png"/>
+                <h6 class="card-subtitle mb-2 mt-2 text-danger">{{review.sentiment}}</h6>
+            {% else %}
+                <h6 class="card-subtitle mb-2 mt-2 text-muted">Could not analyze sentiment</h6>
+            {% endif %}
+            </div>
+            
+            <div class="card-body">
+            <h5 class="card-title">{{review.name}}</h5>
+            {% if review.purchase %}
+                <h6 class="card-title mb-2 text-muted">{{review.car_make}} {{review.car_model}} ({{review.car_year}})</h6>
+            {% else %}
+                <h6 class="card-subtitle mb-2 text-muted">Did not make a purchase</h6>
+            {% endif %}
+            <p class="card-text">{{review.review}}</p>
+            
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% if user.is_authenticated %}
+<div class="w-100 text-center mt-3">
+    <button id="reviewbtn" class="btn btn-outline-dark">Post a new review</button>
+    <div id="review" class="m-auto border border-primary rounded" style="display: none;width: 35%">
+        <div class="m-2">
+            <form action="/djangoapp/post_review/{{dealership.id}}" method="post">
+                {% csrf_token %}
+                <div class="form-row form-group mt">
+                    <div class="col-md-4 col-form-label-lg text-left">
+                        <label for="name">Name: </label>
+                    </div>
+                    <div class="col d-flex align-items-center" id="name">
+                        {{ review_form.name|addcss:"form-control mr-sm-2"}}
+                    </div>
+                </div>
+                <div class="form-row form-group mt">
+                    <div class="col-md-4 col-form-label-lg text-left">
+                        <label for="review">Enter review content: </label>
+                    </div>
+                    <div class="col d-flex align-items-center" id="review">
+                        {{ review_form.review|addcss:"form-control mr-sm-2"}}
+                    </div>
+                </div>
+                <div class="form-row form-group mt">
+                    <div class="col-md-4 d-flex align-items-center justify-content-center" id="purchase">
+                        {{ review_form.purchase|addcss:"form-check mr-sm-2"}}
+                    </div>
+                    <div class="col col-form-label-lg text-left">
+                        <label for="purchase">Has purchased the car from {{dealership.full_name}}?</label>
+                    </div>
+                </div>
+                <div id="purchased" style="display: none;">
+                    <div class="form-row form-group mt">
+                        <div class="col-md-4 col-form-label-lg text-left">
+                            <label for="car">Car: </label>
+                        </div>
+                        <div class="col d-flex align-items-center" id="car">
+                            {{ review_form.selected_car|addcss:"form-control mr-sm-2"}}
+                        </div>
+                    </div>
+                    <div class="form-row form-group mt">
+                        <div class="col-md-4 col-form-label-lg text-left">
+                            <label for="purDate">Purchase Date: </label>
+                        </div>
+                        <div class="col d-flex align-items-center" id="purDate">
+                            {{ review_form.purchase_date|addcss:"form-control datepicker"}}
+                        </div>
+                    </div>
+                </div>
+                <button id="submitbtn" type="submit" class="btn btn-outline-dark" style="display: none">Submit review</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

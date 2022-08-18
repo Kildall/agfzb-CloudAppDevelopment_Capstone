@@ -1,7 +1,48 @@
 
 {% extends "./base.html" %}
-
 {% block content %}
-    <h2>Content for My App</h2>
-    <p>Stuff etc etc.</p>
+<script>
+    $(function() {
+      $('#table').bootstrapTable()
+    })
+</script>
+<div class="w-100 text-center">
+    <h1>Avaiable Dealerships</h1>
+</div>
+<div class="mt-3">
+    <table class="table table-bordered w-75 m-auto" id="table" data-filter-control="true">
+        <thead>
+            <tr>
+                <th data-field="id">ID</th>
+                <th data-field="full_name">Dealer Name</th>
+                <th data-field="city">City</th>
+                <th data-field="address">Address</th>
+                <th data-field="zip">Zip</th>
+                <th data-field="st" data-filter-control="select">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dealer in dealerships %}
+                <tr>
+                    <td>{{dealer.id}}</td>
+                    <td><a href="/djangoapp/reviews/{{dealer.id}}">{{dealer.full_name}}</a></td>
+                    <td>{{dealer.city}}</td>
+                    <td>{{dealer.address}}</td>
+                    <td>{{dealer.zip}}</td>
+                    <td>{{dealer.st}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!--{% for dealer in dealerships %}
+        <div class="card d-inline-flex mr-2 ml-2 mb-2" style="width: 18rem;">
+            <div class="card-body">
+            <h5 class="card-title">{{dealer.short_name}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{dealer.city}}, {{dealer.st}}</h6>
+            <p class="card-text">{{dealer.full_name}} ubicated in {{dealer.city}} is your next place to rent your car! Come visit us: {{dealer.address}}</p>
+            <a href="/djangoapp/reviews/{{dealer.id}}" class="card-link">Reviews</a>
+            </div>
+        </div>
+    {% endfor %}-->
+    </div>
 {% endblock content %}
